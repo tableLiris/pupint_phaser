@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>Physics_Deceleration</title>
+        <title>World2</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width">
     </head>
@@ -134,7 +134,14 @@ function create() {
 	
 	//Scale it to fit the width of the game 
     ground.scale.setTo(4, 4);
+	
+	//This stops it from falling away when we jump on it
     ground.body.immovable = true;
+		
+	//Create an invisible roof
+	ground = platforms.create(0, -130, 'ground');
+	ground.scale.setTo(4, 4);
+	ground.body.immovable = true;
 	
 	//Create two ledges
     var ledge = platforms.create(game.world.width-550, 250, 'ground');
@@ -263,6 +270,8 @@ jQuery(document).ready(function($) {
 		game.physics.arcade.enable(player);
 		player.body.bounce.y = 0.2;
 		player.body.gravity.y = 150;
+		player.body.maxVelocity.x = 350;
+		player.body.maxVelocity.y = 350;
 		player.animations.add('left', [0, 1, 2, 3], 10, true);
 		player.animations.add('right', [5, 6, 7, 8], 10, true);
 		player.body.velocity.x = obj[0].playerBodyVelocityX;
@@ -272,7 +281,7 @@ jQuery(document).ready(function($) {
 	});
 	
 	var client = new Tuio.Client({
-		host: "http://192.168.1.104:5000"
+		host: "http://192.168.1.106:5000"
 	}),
 	screenW = $(window).width(),
 	screenH = $(window).height(),
@@ -285,46 +294,17 @@ jQuery(document).ready(function($) {
 
 	// Gesture recognition function
 	gesture = function(event){
-		if (event.type == "release") {
-			//The velocity of player is corresponding to the distance of the finger we moved on surface
-			if(dragLeft == true){
+		if(spriteExist){
+			if (event.type == "touch"){
+				posX = event.gesture.touches[0].pageX - player.position.x;
+				posY = event.gesture.touches[0].pageY - player.position.y;
 				player.body.velocity.x = posX;
-				player.animations.play('left');
-				dragLeft = false;
-			}else if(dragRight == true){
+				player.body.velocity.y = posY;
+			}else if(event.type == "drag"){
 				player.body.velocity.x = posX;
-				player.animations.play('right');
-				dragRight = false
-			}
-			if(dragUp == true){
 				player.body.velocity.y = posY;
-				dragUp = false;
-			}else if(dragDown == true){
-				player.body.velocity.y = posY;
-				dragDown = false;
-			}
-				posX = 0;
-				posY = 0;
-		}
-		else if (event.type == "drag") {
-			posX = event.gesture.touches[0].pageX - event.gesture.startEvent.center.pageX;
-			posY = event.gesture.touches[0].pageY - event.gesture.startEvent.center.pageY;
-			if( posX!=0 ){
-				if(posX>0){
-					dragRight = true;
-				}
-				else if(posX<0){
-					dragLeft = true;
-				}
-			}
-			if(posY!= 0){
-				if(posY<0){
-					dragUp = true;
-				}else if(posY>0){
-					dragDown = true;
-				}
-			}/**/
-		}		 
+			}		
+		}	 
 	},
 	// Init function
 	onConnect = function() {

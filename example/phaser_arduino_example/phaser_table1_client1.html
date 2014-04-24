@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>Physics_Deceleration</title>
+        <title>World1</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width">
     </head>
@@ -132,8 +132,6 @@ function create() {
 	
 	//Create the right brick wall
 	brickRight = platforms.create(game.world.width-50, 0, 'brick');
-	
-	//This stops it from falling away when we jump on it
 	brickRight.body.immovable = true;
 	
 	//Create the left brick wall
@@ -145,7 +143,14 @@ function create() {
 	
 	//Scale it to fit the width of the game 
     ground.scale.setTo(4, 4);
+	
+	//This stops it from falling away when we jump on it
     ground.body.immovable = true;
+	
+	//Create an invisible roof
+	ground = platforms.create(0, -130, 'ground');
+	ground.scale.setTo(4, 4);
+	ground.body.immovable = true;
 	
 	//Create two ledges
     var ledge = platforms.create(game.world.width-450, 400, 'ground');
@@ -162,6 +167,10 @@ function create() {
 	//Player physics properties: bounce and gravity
     player.body.bounce.y = 0.2;
     player.body.gravity.y = 150;
+	
+	// Set max velocity in X and Y axis
+	player.body.maxVelocity.x = 350;
+	player.body.maxVelocity.y = 350;
 	
 	//Walking animations
     player.animations.add('left', [0, 1, 2, 3], 10, true);
@@ -209,7 +218,7 @@ function update() {
 		player.body.drag.x  = 80;
 		
 		//Control by keyborad
-		if (cursors.left.isDown)
+		/*if (cursors.left.isDown)
 		{
 			player.body.velocity.x = -150;
 			player.animations.play('left');
@@ -227,8 +236,8 @@ function update() {
 		if (cursors.up.isDown && player.body.touching.down)
 		{
 			player.body.velocity.y = -350;
-		}
-		/*
+		}*/
+		
 		//Animation of the player
 		if(player.body.velocity.x<-10){
 			player.animations.play('left');
@@ -238,7 +247,7 @@ function update() {
 			player.animations.stop();
 			player.frame = 4;
 		}
-		*/
+		
 		//When the player reaches the right border of the game world, we kill it and send the message of its position and velocity
 		if (player.position.x  >= screenW-32)
 			{
@@ -298,30 +307,34 @@ jQuery(document).ready(function($) {
 	socket.on("addSprite", function(data) {
 		var obj = JSON.parse(data);
 		if ((obj[0].direction == 'tablet_left')){
-		screenW = $(window).width();
-		screenH = $(window).height();
-		player = game.add.sprite(screenW-50, obj[0].screenHigh*(screenH-112), 'dude');
-		game.physics.arcade.enable(player);
-		player.body.bounce.y = 0.2;
-		player.body.gravity.y = 150;
-		player.animations.add('left', [0, 1, 2, 3], 10, true);
-		player.animations.add('right', [5, 6, 7, 8], 10, true);
-		player.body.velocity.x = obj[0].playerBodyVelocityX;
-		player.body.velocity.y = obj[0].playerBodyVelocityY;
-		spriteExist = true;
+			screenW = $(window).width();
+			screenH = $(window).height();
+			player = game.add.sprite(screenW-50, obj[0].screenHigh*(screenH-112), 'dude');
+			game.physics.arcade.enable(player);
+			player.body.bounce.y = 0.2;
+			player.body.gravity.y = 150;
+			player.body.maxVelocity.x = 350;
+			player.body.maxVelocity.y = 350;
+			player.animations.add('left', [0, 1, 2, 3], 10, true);
+			player.animations.add('right', [5, 6, 7, 8], 10, true);
+			player.body.velocity.x = obj[0].playerBodyVelocityX;
+			player.body.velocity.y = obj[0].playerBodyVelocityY;
+			spriteExist = true;
 		}
 		else if ((obj[0].direction == 'table2_right')){
-		screenW = $(window).width();
-		screenH = $(window).height();
-		player = game.add.sprite(1, obj[0].screenHigh*(screenH-112), 'dude');
-		game.physics.arcade.enable(player);
-		player.body.bounce.y = 0.2;
-		player.body.gravity.y = 150;
-		player.animations.add('left', [0, 1, 2, 3], 10, true);
-		player.animations.add('right', [5, 6, 7, 8], 10, true);
-		player.body.velocity.x = obj[0].playerBodyVelocityX;
-		player.body.velocity.y = obj[0].playerBodyVelocityY;
-		spriteExist = true;
+			screenW = $(window).width();
+			screenH = $(window).height();
+			player = game.add.sprite(1, obj[0].screenHigh*(screenH-112), 'dude');
+			game.physics.arcade.enable(player);
+			player.body.bounce.y = 0.2;
+			player.body.gravity.y = 150;
+			player.body.maxVelocity.x = 350;
+			player.body.maxVelocity.y = 350;
+			player.animations.add('left', [0, 1, 2, 3], 10, true);
+			player.animations.add('right', [5, 6, 7, 8], 10, true);
+			player.body.velocity.x = obj[0].playerBodyVelocityX;
+			player.body.velocity.y = obj[0].playerBodyVelocityY;
+			spriteExist = true;
 		} 
 	});
 	
@@ -339,46 +352,17 @@ jQuery(document).ready(function($) {
 
 	// Gesture recognition function
 	gesture = function(event){
-		if (event.type == "release") {
-			//The velocity of player is corresponding to the distance of the finger we moved on surface
-			if(dragLeft == true){
+		if(spriteExist){
+			if (event.type == "touch"){
+				posX = event.gesture.touches[0].pageX - player.position.x;
+				posY = event.gesture.touches[0].pageY - player.position.y;
 				player.body.velocity.x = posX;
-				player.animations.play('left');
-				dragLeft = false;
-			}else if(dragRight == true){
+				player.body.velocity.y = posY;
+			}else if(event.type == "drag"){
 				player.body.velocity.x = posX;
-				player.animations.play('right');
-				dragRight = false
-			}
-			if(dragUp == true){
 				player.body.velocity.y = posY;
-				dragUp = false;
-			}else if(dragDown == true){
-				player.body.velocity.y = posY;
-				dragDown = false;
-			}
-				posX = 0;
-				posY = 0;
+			}		
 		}
-		else if (event.type == "drag") {
-			posX = event.gesture.touches[0].pageX - event.gesture.startEvent.center.pageX;
-			posY = event.gesture.touches[0].pageY - event.gesture.startEvent.center.pageY;
-			if( posX!=0 ){
-				if(posX>0){
-					dragRight = true;
-				}
-				else if(posX<0){
-					dragLeft = true;
-				}
-			}
-			if(posY!= 0){
-				if(posY<0){
-					dragUp = true;
-				}else if(posY>0){
-					dragDown = true;
-				}
-			}/**/
-		}		 
 	},
 	// Init function
 	onConnect = function() {
