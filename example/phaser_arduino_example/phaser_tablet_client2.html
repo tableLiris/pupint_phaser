@@ -101,14 +101,16 @@ var cursors;
 var stars;
 var score = 0;
 var scoreText;
+var positionX;
+var positionY;
 var posX = 0;
 var posY = 0;
 var msg;
 var spriteExist;
 
 function preload() {
-	game.stage.backgroundColor = '#F4A460';
-    game.load.image('ground', 'assets/platform_client2.png');
+	game.stage.backgroundColor = '#DDA0DD';
+    game.load.image('ground', 'assets/platform_client3.png');
     game.load.image('star', 'assets/star.png');
     game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
 	game.load.image('brick', 'assets/brick.png');
@@ -123,6 +125,10 @@ function create() {
 	
 	//Enable physics for any object in the platforms group
     platforms.enableBody = true;
+	
+	//Create brick wall
+	var brick = platforms.create(game.world.width-50, 0, 'brick');
+	brick.body.immovable = true;
 	
 	//Create the ground.
 	var ground = platforms.create(0, game.world.height - 64, 'ground');
@@ -140,10 +146,6 @@ function create() {
     ledge.body.immovable = true;
 	ledge = platforms.create(game.world.width-450, 150, 'ground');
     ledge.body.immovable = true;
-	
-	//Create brick wall
-	brick = platforms.create(game.world.width-50, 0, 'brick');
-	brick.body.immovable = true;
 
 	//Create a group of stars
     stars = game.add.group();
@@ -160,11 +162,11 @@ function create() {
 	game.physics.arcade.overlap(stars, platforms, deleteStar,null,this);
 	
 	//The score
-    scoreText = game.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
+    scoreText = game.add.text(55, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
 	
 	//Position of player
-	distanceX = game.add.text(16, 46, 'DistanceX: 0', { fontSize: '32px', fill: '#000' });
-	distanceY = game.add.text(16, 76, 'DistanceY: 0', { fontSize: '32px', fill: '#000' });
+	positionX = game.add.text(55, 46, 'PositionX: 0', { fontSize: '32px', fill: '#000' });
+	positionY = game.add.text(55, 76, 'PositionY: 0', { fontSize: '32px', fill: '#000' });
     
 	//Control of keyborad
 	cursors = game.input.keyboard.createCursorKeys();
@@ -180,8 +182,8 @@ function update() {
 		game.physics.arcade.overlap(player, stars, collectStar, null, this);
 				
 		//Update position of the player
-		distanceX.text = "PositionX: " + Math.floor(player.position.x);	
-		distanceY.text = "PositionY: " + Math.floor(player.position.y);
+		positionX.text = "PositionX: " + Math.floor(player.position.x);	
+		positionY.text = "PositionY: " + Math.floor(player.position.y);
 		
 		//Give the player a deceleration on X axis
 		player.body.drag.x  = 80;
@@ -222,7 +224,7 @@ function update() {
 		{
 			
 			msg = {identifiation: 'tablet', direction: 'tablet_left', playerPositionX: player.position.x, playerPositionY: player.position.y, screenHigh: player.position.y/(screenH-112), playerBodyVelocityX: player.body.velocity.x, playerBodyVelocityY: player.body.velocity.y};
-			socket.emit('circle',msg);
+			socket.emit('addSprite',msg);
 			killSprite(player);
 		};
 		
@@ -258,24 +260,24 @@ jQuery(document).ready(function($) {
 	socket.on("news", function(data) {
 		pos = data.hello;
 		//Send a message when first connects
-		socket.emit("rectangle", {table: "tablet"});
+		socket.emit("removeWall", {table: "tablet"});
 	});	
 	
 	//When receive the message, make the player and add its properites
-	socket.on("circle", function(data) {
+	socket.on("addSprite", function(data) {
 		var obj = JSON.parse(data);
 		if (obj[0].direction == 'table1_right'){
-		screenW = $(window).width();
-		screenH = $(window).height();
-		player = game.add.sprite(1, obj[0].screenHigh*(screenH-112), 'dude');
-		game.physics.arcade.enable(player);
-		player.body.bounce.y = 0.2;
-		player.body.gravity.y = 150;
-		player.animations.add('left', [0, 1, 2, 3], 10, true);
-		player.animations.add('right', [5, 6, 7, 8], 10, true);
-		player.body.velocity.x = obj[0].playerBodyVelocityX;
-		player.body.velocity.y = obj[0].playerBodyVelocityY;
-		spriteExist = true;
+			screenW = $(window).width();
+			screenH = $(window).height();
+			player = game.add.sprite(1, obj[0].screenHigh*(screenH-112), 'dude');
+			game.physics.arcade.enable(player);
+			player.body.bounce.y = 0.2;
+			player.body.gravity.y = 150;
+			player.animations.add('left', [0, 1, 2, 3], 10, true);
+			player.animations.add('right', [5, 6, 7, 8], 10, true);
+			player.body.velocity.x = obj[0].playerBodyVelocityX;
+			player.body.velocity.y = obj[0].playerBodyVelocityY;
+			spriteExist = true;
 		}
 	});
 	

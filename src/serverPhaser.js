@@ -28,11 +28,11 @@ var app = require('http').createServer(handler),
         socket.on('blob', function (data) {
             socket.broadcast.emit('blob',data);
         });
-        socket.on('circle', function (data) {
-            socket.broadcast.emit('circle',data);
+        socket.on('addSprite', function (data) {
+            socket.broadcast.emit('addSprite',data);
         });
-        socket.on('rectangle', function (data) {
-            socket.broadcast.emit('rectangle',data);
+        socket.on('removeWall', function (data) {
+            socket.broadcast.emit('removeWall',data);
         });
         socket.on('ray', function (data) {
             socket.broadcast.emit('ray',data);
