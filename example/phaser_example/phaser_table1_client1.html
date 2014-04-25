@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>Physics_Deceleration</title>
+        <title>World1</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width">
     </head>
@@ -11,83 +11,14 @@
 	<div style="position: relative;">		
 	</div>
 	<div>
-		<script src="js/phaser.min.js"></script>
+		<script src="../js/phaser.min.js"></script>
         <script src="../libs/prototype-1.6.0.2.js"></script>
         <script src="../libs/jquery-1.7.2.js"></script>
-        <script src="../libs/requestanimationframe.js"></script>
-        <script src='../js/box2d/common/b2Settings.js'></script>
-        <script src='../js/box2d/common/math/b2Vec2.js'></script>
-        <script src='../js/box2d/common/math/b2Mat22.js'></script>
-        <script src='../js/box2d/common/math/b2Math.js'></script>
-        <script src='../js/box2d/collision/b2AABB.js'></script>
-        <script src='../js/box2d/collision/b2Bound.js'></script>
-        <script src='../js/box2d/collision/b2BoundValues.js'></script>
-        <script src='../js/box2d/collision/b2Pair.js'></script>
-        <script src='../js/box2d/collision/b2PairCallback.js'></script>
-        <script src='../js/box2d/collision/b2BufferedPair.js'></script>
-        <script src='../js/box2d/collision/b2PairManager.js'></script>
-        <script src='../js/box2d/collision/b2BroadPhase.js'></script>
-        <script src='../js/box2d/collision/b2Collision.js'></script>
-        <script src='../js/box2d/collision/Features.js'></script>
-        <script src='../js/box2d/collision/b2ContactID.js'></script>
-        <script src='../js/box2d/collision/b2ContactPoint.js'></script>
-        <script src='../js/box2d/collision/b2Distance.js'></script>
-        <script src='../js/box2d/collision/b2Manifold.js'></script>
-        <script src='../js/box2d/collision/b2OBB.js'></script>
-        <script src='../js/box2d/collision/b2Proxy.js'></script>
-        <script src='../js/box2d/collision/ClipVertex.js'></script>
-        <script src='../js/box2d/collision/shapes/b2Shape.js'></script>
-        <script src='../js/box2d/collision/shapes/b2ShapeDef.js'></script>
-        <script src='../js/box2d/collision/shapes/b2BoxDef.js'></script>
-        <script src='../js/box2d/collision/shapes/b2CircleDef.js'></script>
-        <script src='../js/box2d/collision/shapes/b2CircleShape.js'></script>
-        <script src='../js/box2d/collision/shapes/b2MassData.js'></script>
-        <script src='../js/box2d/collision/shapes/b2PolyDef.js'></script>
-        <script src='../js/box2d/collision/shapes/b2PolyShape.js'></script>
-        <script src='../js/box2d/dynamics/b2Body.js'></script>
-        <script src='../js/box2d/dynamics/b2BodyDef.js'></script>
-        <script src='../js/box2d/dynamics/b2CollisionFilter.js'></script>
-        <script src='../js/box2d/dynamics/b2Island.js'></script>
-        <script src='../js/box2d/dynamics/b2TimeStep.js'></script>
-        <script src='../js/box2d/dynamics/contacts/b2ContactNode.js'></script>
-        <script src='../js/box2d/dynamics/contacts/b2Contact.js'></script>
-        <script src='../js/box2d/dynamics/contacts/b2ContactConstraint.js'></script>
-        <script src='../js/box2d/dynamics/contacts/b2ContactConstraintPoint.js'></script>
-        <script src='../js/box2d/dynamics/contacts/b2ContactRegister.js'></script>
-        <script src='../js/box2d/dynamics/contacts/b2ContactSolver.js'></script>
-        <script src='../js/box2d/dynamics/contacts/b2CircleContact.js'></script>
-        <script src='../js/box2d/dynamics/contacts/b2Conservative.js'></script>
-        <script src='../js/box2d/dynamics/contacts/b2NullContact.js'></script>
-        <script src='../js/box2d/dynamics/contacts/b2PolyAndCircleContact.js'></script>
-        <script src='../js/box2d/dynamics/contacts/b2PolyContact.js'></script>
-        <script src='../js/box2d/dynamics/b2ContactManager.js'></script>
-        <script src='../js/box2d/dynamics/b2World.js'></script>
-        <script src='../js/box2d/dynamics/b2WorldListener.js'></script>
-        <script src='../js/box2d/dynamics/joints/b2JointNode.js'></script>
-        <script src='../js/box2d/dynamics/joints/b2Joint.js'></script>
-        <script src='../js/box2d/dynamics/joints/b2JointDef.js'></script>
-        <script src='../js/box2d/dynamics/joints/b2DistanceJoint.js'></script>
-        <script src='../js/box2d/dynamics/joints/b2DistanceJointDef.js'></script>
-        <script src='../js/box2d/dynamics/joints/b2Jacobian.js'></script>
-        <script src='../js/box2d/dynamics/joints/b2GearJoint.js'></script>
-        <script src='../js/box2d/dynamics/joints/b2GearJointDef.js'></script>
-        <script src='../js/box2d/dynamics/joints/b2MouseJoint.js'></script>
-        <script src='../js/box2d/dynamics/joints/b2MouseJointDef.js'></script>
-        <script src='../js/box2d/dynamics/joints/b2PrismaticJoint.js'></script>
-        <script src='../js/box2d/dynamics/joints/b2PrismaticJointDef.js'></script>
-        <script src='../js/box2d/dynamics/joints/b2PulleyJoint.js'></script>
-        <script src='../js/box2d/dynamics/joints/b2PulleyJointDef.js'></script>
-        <script src='../js/box2d/dynamics/joints/b2RevoluteJoint.js'></script>
-        <script src='../js/box2d/dynamics/joints/b2RevoluteJointDef.js'></script>
-        <script src='../libs/draw_world.js'></script>
         <script src="../libs/lodash.js"></script>
         <script src="../libs/socket.io.js"></script>
         <script src="../dist/Tuio.js"></script>
         <script src="../dist/hammer.js"></script>
         <script src="../dist/Pattern.js"></script>
-        <script src="../dist/Shape.js"></script>
-        <script src="../dist/Circle.js"></script>
-        <script src="../dist/Rectangle.js"></script>
         <script src="../dist/Manager.js"></script>
 	</div>
         <script>
@@ -102,6 +33,8 @@ var brickLeft;
 var brickRight;
 var score = 0;
 var scoreText;
+var positionX;
+var positionY;
 var posX = 0;
 var posY = 0;
 var msg;
@@ -130,8 +63,6 @@ function create() {
 	
 	//Create the right brick wall
 	brickRight = platforms.create(game.world.width-50, 0, 'brick');
-	
-	//This stops it from falling away when we jump on it
 	brickRight.body.immovable = true;
 	
 	//Create the left brick wall
@@ -143,7 +74,14 @@ function create() {
 	
 	//Scale it to fit the width of the game 
     ground.scale.setTo(4, 4);
+	
+	//This stops it from falling away when we jump on it
     ground.body.immovable = true;
+	
+	//Create an invisible roof
+	ground = platforms.create(0, -130, 'ground');
+	ground.scale.setTo(4, 4);
+	ground.body.immovable = true;
 	
 	//Create two ledges
     var ledge = platforms.create(game.world.width-450, 400, 'ground');
@@ -152,7 +90,7 @@ function create() {
     ledge.body.immovable = true;
 	
 	//Create the player
-	player = game.add.sprite(1100, game.world.height - 250, 'dude');
+	player = game.add.sprite(100, game.world.height - 250, 'dude');
 	
 	//Enable physics on the player
     game.physics.arcade.enable(player);
@@ -160,6 +98,10 @@ function create() {
 	//Player physics properties: bounce and gravity
     player.body.bounce.y = 0.2;
     player.body.gravity.y = 150;
+	
+	// Set max velocity in X and Y axis
+	player.body.maxVelocity.x = 350;
+	player.body.maxVelocity.y = 350;
 	
 	//Walking animations
     player.animations.add('left', [0, 1, 2, 3], 10, true);
@@ -181,11 +123,11 @@ function create() {
 	game.physics.arcade.overlap(stars, platforms, killStar,null,this);
 	
 	//The score
-    scoreText = game.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
+    scoreText = game.add.text(55, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
 	
 	//Position of player
-	distanceX = game.add.text(16, 46, 'DistanceX: 0', { fontSize: '32px', fill: '#000' });
-	distanceY = game.add.text(16, 76, 'DistanceY: 0', { fontSize: '32px', fill: '#000' });
+	positionX = game.add.text(55, 46, 'PositionX: 0', { fontSize: '32px', fill: '#000' });
+	positionY = game.add.text(55, 76, 'PositionY: 0', { fontSize: '32px', fill: '#000' });
     
 	//Control of keyborad
 	cursors = game.input.keyboard.createCursorKeys();
@@ -200,8 +142,8 @@ function update() {
 		game.physics.arcade.overlap(player, stars, collectStar, null, this);
 		
 		//Update position of the player
-		distanceX.text = "PositionX: " + Math.floor(player.position.x);	
-		distanceY.text = "PositionY: " + Math.floor(player.position.y);
+		positionX.text = "PositionX: " + Math.floor(player.position.x);	
+		positionY.text = "PositionY: " + Math.floor(player.position.y);
 		
 		//Give the player a deceleration on X axis
 		player.body.drag.x  = 80;
@@ -241,13 +183,13 @@ function update() {
 		if (player.position.x  >= screenW-32)
 			{
 				msg = {name: 'table1', direction: 'table1_right', playerPositionX: player.position.x, playerPositionY: player.position.y, screenHigh: player.position.y/(screenH-112), playerBodyVelocityX: player.body.velocity.x, playerBodyVelocityY: player.body.velocity.y};
-				socket.emit('circle',msg);
+				socket.emit('addSprite',msg);
 				killSprite(player);
 			}
-		else if (player.position.x  <= 32)
+		else if (player.position.x  <= 0)
 			{
 				msg = {name: 'table1', direction: 'table1_left', playerPositionX: player.position.x, playerPositionY: player.position.y, screenHigh: player.position.y/(screenH-112), playerBodyVelocityX: player.body.velocity.x, playerBodyVelocityY: player.body.velocity.y};
-				socket.emit('circle',msg);
+				socket.emit('addSprite',msg);
 				killSprite(player);
 			}	
 	}
@@ -282,7 +224,7 @@ jQuery(document).ready(function($) {
 	});	
 	
 	//When another device connects, remove the brick wall from this game world
-	socket.on("rectangle", function(data) {
+	socket.on("removeWall", function(data) {
 		var obj = JSON.parse(data);
 		if (obj[0].table == "tablet"){
 			brickRight.kill();
@@ -293,33 +235,37 @@ jQuery(document).ready(function($) {
 	});
 	
 	//When receive the message, make the player and add its properites
-	socket.on("circle", function(data) {
+	socket.on("addSprite", function(data) {
 		var obj = JSON.parse(data);
 		if ((obj[0].direction == 'tablet_left')){
-		screenW = $(window).width();
-		screenH = $(window).height();
-		player = game.add.sprite(screenW-50, obj[0].screenHigh*(screenH-112), 'dude');
-		game.physics.arcade.enable(player);
-		player.body.bounce.y = 0.2;
-		player.body.gravity.y = 150;
-		player.animations.add('left', [0, 1, 2, 3], 10, true);
-		player.animations.add('right', [5, 6, 7, 8], 10, true);
-		player.body.velocity.x = obj[0].playerBodyVelocityX;
-		player.body.velocity.y = obj[0].playerBodyVelocityY;
-		spriteExist = true;
+			screenW = $(window).width();
+			screenH = $(window).height();
+			player = game.add.sprite(screenW-50, obj[0].screenHigh*(screenH-112), 'dude');
+			game.physics.arcade.enable(player);
+			player.body.bounce.y = 0.2;
+			player.body.gravity.y = 150;
+			player.body.maxVelocity.x = 350;
+			player.body.maxVelocity.y = 350;
+			player.animations.add('left', [0, 1, 2, 3], 10, true);
+			player.animations.add('right', [5, 6, 7, 8], 10, true);
+			player.body.velocity.x = obj[0].playerBodyVelocityX;
+			player.body.velocity.y = obj[0].playerBodyVelocityY;
+			spriteExist = true;
 		}
 		else if ((obj[0].direction == 'table2_right')){
-		screenW = $(window).width();
-		screenH = $(window).height();
-		player = game.add.sprite(50, obj[0].screenHigh*(screenH-112), 'dude');
-		game.physics.arcade.enable(player);
-		player.body.bounce.y = 0.2;
-		player.body.gravity.y = 150;
-		player.animations.add('left', [0, 1, 2, 3], 10, true);
-		player.animations.add('right', [5, 6, 7, 8], 10, true);
-		player.body.velocity.x = obj[0].playerBodyVelocityX;
-		player.body.velocity.y = obj[0].playerBodyVelocityY;
-		spriteExist = true;
+			screenW = $(window).width();
+			screenH = $(window).height();
+			player = game.add.sprite(1, obj[0].screenHigh*(screenH-112), 'dude');
+			game.physics.arcade.enable(player);
+			player.body.bounce.y = 0.2;
+			player.body.gravity.y = 150;
+			player.body.maxVelocity.x = 350;
+			player.body.maxVelocity.y = 350;
+			player.animations.add('left', [0, 1, 2, 3], 10, true);
+			player.animations.add('right', [5, 6, 7, 8], 10, true);
+			player.body.velocity.x = obj[0].playerBodyVelocityX;
+			player.body.velocity.y = obj[0].playerBodyVelocityY;
+			spriteExist = true;
 		} 
 	});
 	
@@ -337,46 +283,17 @@ jQuery(document).ready(function($) {
 
 	// Gesture recognition function
 	gesture = function(event){
-		if (event.type == "release") {
-			//The velocity of player is corresponding to the distance of the finger we moved on surface
-			if(dragLeft == true){
+		if(spriteExist){
+			if (event.type == "touch"){
+				posX = event.gesture.touches[0].pageX - player.position.x;
+				posY = event.gesture.touches[0].pageY - player.position.y;
 				player.body.velocity.x = posX;
-				player.animations.play('left');
-				dragLeft = false;
-			}else if(dragRight == true){
+				player.body.velocity.y = posY;
+			}else if(event.type == "drag"){
 				player.body.velocity.x = posX;
-				player.animations.play('right');
-				dragRight = false
-			}
-			if(dragUp == true){
 				player.body.velocity.y = posY;
-				dragUp = false;
-			}else if(dragDown == true){
-				player.body.velocity.y = posY;
-				dragDown = false;
-			}
-				posX = 0;
-				posY = 0;
+			}		
 		}
-		else if (event.type == "drag") {
-			posX = event.gesture.touches[0].pageX - event.gesture.startEvent.center.pageX;
-			posY = event.gesture.touches[0].pageY - event.gesture.startEvent.center.pageY;
-			if( posX!=0 ){
-				if(posX>0){
-					dragRight = true;
-				}
-				else if(posX<0){
-					dragLeft = true;
-				}
-			}
-			if(posY!= 0){
-				if(posY<0){
-					dragUp = true;
-				}else if(posY>0){
-					dragDown = true;
-				}
-			}/**/
-		}		 
 	},
 	// Init function
 	onConnect = function() {

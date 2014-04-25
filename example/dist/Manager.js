@@ -15,76 +15,14 @@ function Manager() {
     this.hammertime = Hammer(window).on(this.all_events.join(" "), function(event) {
         window.onGesture(event);
     })
-    this.hammertime.options.prevent_default = true;
-    this.worldAABB = new b2AABB();
-    this.gravity = new b2Vec2(0, 0);
     this.doSleep = true;
     this.world = null;
                 
     if( typeof Manager.initialized == "undefined" ) { 
 
-        Manager.prototype.distance = function(x1,y1,x2,y2) {
-            return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
-        };
-
-        Manager.prototype.projection = function(s,x,y,x0,y0) {
-            if (s == 0) {
-                var xR = x0;
-                var yR = y;
-            } else if (s == Infinity){
-                var xR = x;
-                var yR = y0;
-            } else {
-                var b1 = y - s * x;
-                var b2 = y0 + 1 / s * x0;
-                var xR = (b1-b2) / (- s - 1/s);
-                var yR = (s*xR + b1);
-            }
-            
-            return [xR,yR];
-        };
-
-        Manager.prototype.intersection = function(s1,x1,y1,s2,x2,y2) {
-            if (s1 == Infinity || s2 == Infinity) {
-                return [x1, Infinity];
-            }
-            var b1 = y1 - s1 * x1;
-            var b2 = y2 - s2 * x2;
-            if ((s1 - s2) != 0) {
-                var xR = (b2 - b1) / (s1 - s2);
-                var yR = s1 * xR + b1;
-                return [xR,yR];
-            } else if (s1 == 0) {
-                return [Infinity, y1];
-            } 
-
-            
-        };
-
+       
         Manager.prototype.getWorld = function() {
             return this.world;
-        };
-
-        Manager.prototype.getObjects = function(xPos,yPos) {
-            var objectList = [];
-            for (var i = 0; i < this.circleList.length; i++) {
-                if (distance(xPos,yPos,this.circleList[i].getXAbsolutePosition(), this.circleList[i].getYAbsolutePosition()) < this.circleList[i].getAbsoluteRadius()) {
-                    objectList.push(this.circleList[i]);
-                }
-            }
-
-            for (var i = 0; i < this.rectangleList.length; i++) {
-                if ((xPos > this.rectangleList[i].getXAbsolutePosition() - this.rectangleList[i].getAbsoluteWidth() / 2) &&  (xPos < this.rectangleList[i].getXAbsolutePosition() + this.rectangleList[i].getAbsoluteWidth() / 2)
-                    && (yPos > this.rectangleList[i].getYAbsolutePosition() - this.rectangleList[i].getAbsoluteHeight() / 2) &&  (yPos < this.rectangleList[i].getYAbsolutePosition() + this.rectangleList[i].getAbsoluteHeight() / 2)) {
-                    objectList.push(this.rectangleList[i]);
-                }
-            }
-
-            return objectList;
-        };
-
-        Manager.prototype.setGravity = function(x,y) {
-            this.gravity = new b2Vec2(x,y);
         };
 
         Manager.prototype.setOnGesture = function (func) {
@@ -96,20 +34,8 @@ function Manager() {
             window.screenH = screenHeight;
         };
 
-        Manager.prototype.setFirstRectangle = function(rect) {
-            this.rectangleList.splice(1, 0, this.rectangleList.splice(this.rectangleList.indexOf(rect), 1)[0]);
-        };
-
         Manager.prototype.addPattern = function(newBlob) {
             this.patternList.push(newBlob);
-        };
-
-        Manager.prototype.addCircle = function(newCircle) {
-            this.circleList.push(newCircle);
-        };
-
-        Manager.prototype.addRectangle = function(newRectangle) {
-            this.rectangleList.push(newRectangle);
         };
 
         Manager.prototype.removeAllPatterns = function() {
@@ -117,52 +43,6 @@ function Manager() {
                 this.patternList.pop();
             }
         };
-
-        Manager.prototype.removeCircle = function(c) {
-            var i = this.circleList.indexOf(c);
-            if (i != -1) {
-                this.circleList.splice(i,1);
-            }
-        }
-
-        Manager.prototype.removeAllCircle = function() {
-            while (this.circleList.length > 0) {
-                this.circleList.pop();
-            }
-        };
-
-        Manager.prototype.removeRectangle = function(rect) {
-            var i = this.rectangleList.indexOf(rect);
-            if (i != -1) {
-                this.rectangleList.splice(i,1);
-            }
-        }
-
-        Manager.prototype.removeAllRectangle = function() {
-            while (this.rectangleList.length > 0) {
-                this.rectangleList.pop();
-            }
-        };
-
-        Manager.prototype.initPhysics = function() {
-            this.worldAABB.minVertex.Set(-2000, -2000);
-            this.worldAABB.maxVertex.Set(2000, 2000);
-            this.world = new b2World(this.worldAABB, this.gravity, this.doSleep);
-        };
-
-        Manager.prototype.stepPhysics = function(step) {
-            var stepping = false;
-            var timeStep = step;
-            var iteration = 1;
-            this.world.Step(timeStep, iteration);
-            for (var i  = 0; i < this.circleList.length; i++){
-                this.circleList[i].reposition();
-            }
-            for (var i  = 0; i < this.rectangleList.length; i++){
-                this.rectangleList[i].reposition();
-            }
-        };
-
 
         Manager.prototype.addEvent = function(blob) {
             var exist = false;
@@ -252,18 +132,6 @@ function Manager() {
             }
             
             return true;
-        };
-
-        Manager.prototype.drawCircle = function() {
-            for (var i = 0; i < this.circleList.length; i++) {
-                this.circleList[i].draw();
-            }
-        };
-
-        Manager.prototype.drawRectangle = function() {
-            for (var i = this.rectangleList.length; i > 0; i--) {
-                this.rectangleList[i-1].draw();
-            }
         };
 
         Manager.prototype.drawBlobs = function(blobs) {
