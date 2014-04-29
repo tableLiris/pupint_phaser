@@ -32,138 +32,189 @@ var cursors;
 var stars;
 var score = 0;
 var scoreText;
-var positionX;
-var positionY;
+var connectingMessage;
+var position = 0; //0 when not connected, 1 for top, 2 for right
 var posX = 0;
 var posY = 0;
 var msg;
 var spriteExist;
+var brickLeft;
 
-function preload() {
-	game.stage.backgroundColor = '#DDA0DD';
-    game.load.image('ground', 'assets/platform_client3.png');
-    game.load.image('star', 'assets/star.png');
-    game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
+function preload(){
+	game.load.image('sky', 'assets/sky.jpg');
+	game.load.image('ground', 'assets/platform.png');
+	game.load.image('star', 'assets/star.png');
+	game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
 	game.load.image('brick', 'assets/brick.png');
 }
 
-function create() {
-	//Enable the Arcade Physics system
-    game.physics.startSystem(Phaser.Physics.ARCADE);
+function create(){
+	//Connect to the top of table1
+	if (position == 1){
+		game.add.sprite(0, 0, 'sky');
+		//Enable the Arcade Physics system
+		game.physics.startSystem(Phaser.Physics.ARCADE);
 
-	//The platforms group contains the ground, the ledges and the brick wall
-    platforms = game.add.group();
-	
-	//Enable physics for any object in the platforms group
-    platforms.enableBody = true;
-	
-	//Create brick wall
-	var brick = platforms.create(game.world.width-50, 0, 'brick');
-	brick.body.immovable = true;
-	
-	//Create the ground.
-	var ground = platforms.create(0, game.world.height - 64, 'ground');
-    
-	//Scale it to fit the width of the game 
-	ground.scale.setTo(4, 4);
-    
-	//This stops it from falling away when we jump on it
-	ground.body.immovable = true;	
-	
-	//Create an invisible roof
-	ground = platforms.create(0, -130, 'ground');
-	ground.scale.setTo(4, 4);
-	ground.body.immovable = true;
-	
-	//Create ledges
-    var ledge = platforms.create(600, 500, 'ground');
-    ledge.body.immovable = true;
-    ledge = platforms.create(110, 250, 'ground');
-    ledge.body.immovable = true;
-	ledge = platforms.create(game.world.width-450, 150, 'ground');
-    ledge.body.immovable = true;
+		//The platforms group contains the ground, the ledges and the brick wall
+		platforms = game.add.group();
 
-	//Create a group of stars
-    stars = game.add.group();
-    stars.enableBody = true;
-	
-	//Create 18 of them, ranged radomly
-    for (var i = 0; i < 18; i++)
-    {
-        var starHeight = game.world.height - Math.floor(Math.random() * 600 + 100);
-        var star = stars.create( i*70, starHeight, 'star');
-    }
-	
-	//If stars are created overlaping with platforms, kill them
-	game.physics.arcade.overlap(stars, platforms, deleteStar,null,this);
-	
-	//The score
-    scoreText = game.add.text(55, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
-	
-	//Position of player
-	positionX = game.add.text(55, 46, 'PositionX: 0', { fontSize: '32px', fill: '#000' });
-	positionY = game.add.text(55, 76, 'PositionY: 0', { fontSize: '32px', fill: '#000' });
-    
-	//Control of keyborad
-	cursors = game.input.keyboard.createCursorKeys();
+		//Enable physics for any object in the platforms group
+		platforms.enableBody = true;
+
+		//Create brick wall
+		var brickRight = platforms.create(game.world.width-50, 0, 'brick');
+		brickRight.body.immovable = true;
+		brickLeft = platforms.create(-73, 0, 'brick');
+		brickLeft.body.immovable = true;
+
+		//Create an invisible roof
+		var ground = platforms.create(0, -130, 'ground');
+		ground.scale.setTo(4, 4);
+		ground.body.immovable = true;
+
+		//Create ledges
+		var ledge = platforms.create(110, 350, 'ground');
+		ledge.body.immovable = true;
+		ledge = platforms.create(game.world.width-450, 250, 'ground');
+		ledge.body.immovable = true;
+
+		//Create a group of stars
+		stars = game.add.group();
+		stars.enableBody = true;
+
+		//Create 18 of them, ranged radomly
+		for (var i = 0; i < 18; i++){
+			var starHeight = game.world.height - Math.floor(Math.random() * 600 + 100);
+			var star = stars.create( i*70, starHeight, 'star');
+		}
+
+		//If stars are created overlaping with platforms, kill them
+		game.physics.arcade.overlap(stars, platforms, deleteStar,null,this);
+
+		//The score
+		scoreText = game.add.text(55, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
+
+		//Control of keyborad
+		cursors = game.input.keyboard.createCursorKeys();
+		
+		//Delete the connecting message
+		connectingMessage.destroy();
+	}else if (position == 2){
+		//Connect to the right side of table1
+		game.add.sprite(0, 0, 'sky');
+
+		//Enable the Arcade Physics system
+		game.physics.startSystem(Phaser.Physics.ARCADE);
+
+		//The platforms group contains the ground, the ledges and the brick wall
+		platforms = game.add.group();
+
+		//Enable physics for any object in the platforms group
+		platforms.enableBody = true;
+
+		//Create brick wall
+		var brickRight = platforms.create(game.world.width-50, 0, 'brick');
+		brickRight.body.immovable = true;
+		brickLeft = platforms.create(-73, 0, 'brick');
+		brickLeft.body.immovable = true;
+
+		//Create the ground.
+		var ground = platforms.create(0, game.world.height - 64, 'ground');
+
+		//Scale it to fit the width of the game 
+		ground.scale.setTo(4, 4);
+
+		//This stops it from falling away when we jump on it
+		ground.body.immovable = true;	
+
+		//Create an invisible roof
+		ground = platforms.create(0, -130, 'ground');
+		ground.scale.setTo(4, 4);
+		ground.body.immovable = true;
+
+		//Create ledges
+		var ledge = platforms.create(600, 500, 'ground');
+		ledge.body.immovable = true;
+		ledge = platforms.create(110, 250, 'ground');
+		ledge.body.immovable = true;
+		ledge = platforms.create(game.world.width-450, 150, 'ground');
+		ledge.body.immovable = true;
+
+		//Create a group of stars
+		stars = game.add.group();
+		stars.enableBody = true;
+
+		//Create 18 of them, ranged radomly
+		for (var i = 0; i < 18; i++){
+			var starHeight = game.world.height - Math.floor(Math.random() * 600 + 100);
+			var star = stars.create( i*70, starHeight, 'star');
+		}
+
+		//If stars are created overlaping with platforms, kill them
+		game.physics.arcade.overlap(stars, platforms, deleteStar,null,this);
+
+		//The score
+		scoreText = game.add.text(55, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
+
+		//Control of keyborad
+		cursors = game.input.keyboard.createCursorKeys();
+
+		//Delete the connecting message and left side brick
+		connectingMessage.destroy();
+		brickLeft.destroy();
+	}else{
+		//When unconnected, show the message: 'Waiting to connect...'
+		connectingMessage = game.add.text(200, 200, 'Waiting to connect...', { fontSize: '32px', fill: '#FFF' });
+	}
 }
 
-function update() {
+function update(){
 	if(spriteExist == true){
-	
 		//Collide the player with the platforms
 		game.physics.arcade.collide(player, platforms);
 
 		//If the player overlaps with any of the starts, call the collectStar function
 		game.physics.arcade.overlap(player, stars, collectStar, null, this);
-				
-		//Update position of the player
-		positionX.text = "PositionX: " + Math.floor(player.position.x);	
-		positionY.text = "PositionY: " + Math.floor(player.position.y);
-		
+
 		//Give the player a deceleration on X axis
 		player.body.drag.x  = 80;
-		
+
 		//Control by keyborad
-		/*if (cursors.left.isDown)
-		{
+		if (cursors.left.isDown){
 			player.body.velocity.x = -150;
 			player.animations.play('left');
-		}
-		else if (cursors.right.isDown)
-		{
+		}else if (cursors.right.isDown){
 			player.body.velocity.x = 150;
-			player.animations.play('right');
-		}
-		else
-		{
-			player.animations.stop();
-			player.frame = 4;
-		}
-		if (cursors.up.isDown && player.body.touching.down)
-		{
-			player.body.velocity.y = -350;
-		}*/
-		
-		//Animation of the player
-		if(player.body.velocity.x<-10){
-			player.animations.play('left');
-		}else if(player.body.velocity.x>10){
 			player.animations.play('right');
 		}else{
 			player.animations.stop();
 			player.frame = 4;
 		}
-		
-		//When the player reaches the left border of the game world, we kill it and send the message of its position and velocity
-		if (player.position.x  <= 0)
-		{
-			
+		if(cursors.up.isDown && player.body.touching.down){
+			player.body.velocity.y = -350;
+		}
+		/*
+		//Animation of the player
+		if(player.body.velocity.x<-10){
+		player.animations.play('left');
+		}else if(player.body.velocity.x>10){
+		player.animations.play('right');
+		}else{
+		player.animations.stop();
+		player.frame = 4;
+		}
+		*/
+		//Tablet on the right side of table1, player reaches the left side of the game world
+		if(position == 2 & player.position.x  <= 0){
 			msg = {identifiation: 'tablet', direction: 'tablet_left', playerPositionX: player.position.x, playerPositionY: player.position.y, screenHigh: player.position.y/(screenH-112), playerBodyVelocityX: player.body.velocity.x, playerBodyVelocityY: player.body.velocity.y};
 			socket.emit('addSprite',msg);
 			killSprite(player);
-		};
-		
+		}else if(position == 1 & player.position.y  >= screenH-1){
+			//Tablet on the top of table1, player reaches the buttom of the game world
+			msg = {identification: 'table2', direction: 'table2_up', playerPositionX: player.position.x, playerPositionY: player.position.y, screenWidth: player.position.x/(screenW-50), playerBodyVelocityX: player.body.velocity.x, playerBodyVelocityY: player.body.velocity.y};
+			socket.emit('addSprite',msg);
+			killSprite(player);		
+		}
 	}
 }
 
@@ -173,10 +224,10 @@ function deleteStar (star){
 }
 
 // Collect star and add scores
-function collectStar (player, star) {
-    star.kill();
-    score += 10;
-    scoreText.text = 'Score: ' + score;
+function collectStar (player, star){
+	star.kill();
+	score += 10;
+	scoreText.text = 'Score: ' + score;
 }
 
 //If the player move out of the game world, we kill it
@@ -185,27 +236,42 @@ function killSprite(player){
 	spriteExist = false;
 }
 
-
 $.noConflict();
-jQuery(document).ready(function($) {
+jQuery(document).ready(function($){
 	Hammer.plugins.fakeMultitouch();
-	
-	//connexion to the server to intercept the messages sent to the network
+
+	//Connexion to the server to intercept the messages sent to the network
 	socket = io.connect("192.168.1.104:1337");
 	console.log("connected");
 	socket.on("news", function(data) {
 		pos = data.hello;
-		//Send a message when first connects
-		socket.emit("removeWall", {table: "tablet"});
 	});	
-	
+
 	//When receive the message, make the player and add its properites
 	socket.on("addSprite", function(data) {
 		var obj = JSON.parse(data);
-		if (obj[0].direction == 'table1_right'){
+		//Receive player from the left side
+		if(obj[0].direction == 'table1_right'){
 			screenW = $(window).width();
 			screenH = $(window).height();
 			player = game.add.sprite(1, obj[0].screenHigh*(screenH-112), 'dude');
+			player.scale.setTo(2, 2);
+			game.physics.arcade.enable(player);
+			player.body.bounce.y = 0.2;
+			player.body.gravity.y = 150;
+			player.body.maxVelocity.x = 350;
+			player.body.maxVelocity.y = 350;
+			player.animations.add('left', [0, 1, 2, 3], 10, true);
+			player.animations.add('right', [5, 6, 7, 8], 10, true);
+			player.body.velocity.x = obj[0].playerBodyVelocityX;
+			player.body.velocity.y = obj[0].playerBodyVelocityY;
+			spriteExist = true;
+		}else if (obj[0].direction == 'table1_up'){
+			//Receive player from the down side
+			screenW = $(window).width();
+			screenH = $(window).height();
+			player = game.add.sprite(obj[0].screenWidth*(screenW-100), screenH-96, 'dude');
+			player.scale.setTo(2, 2);
 			game.physics.arcade.enable(player);
 			player.body.bounce.y = 0.2;
 			player.body.gravity.y = 150;
@@ -219,10 +285,26 @@ jQuery(document).ready(function($) {
 		}
 	});
 	
+	//When tablet reaches the right side of table1,
+	//send the message to table1 and build the world on talbet
+	socket.on("changeWorldRight", function() {
+		console.log("connected = true");
+		position = 2;
+		create();
+	});
+
+	//When tablet reaches the top side of table1,
+	//send the message to table1 and build the world on talbet
+	socket.on("changeWorldTop", function() {
+		console.log("connected = true");
+		position = 1;
+		create();
+	});
+
 	var client = new Tuio.Client({
 		host: "http://192.168.1.104:5000"
 	});
-	
+
 	screenW = $(window).width();
 	screenH = $(window).height();
 	manager = new Manager();
@@ -235,7 +317,7 @@ jQuery(document).ready(function($) {
 	// Gesture recognition function
 	gesture = function(event){
 		if(spriteExist == true){
-			if (event.type == "release") {
+			if (event.type == "release"){
 				if(dragLeft == true){
 					player.body.velocity.x = posX;
 					player.animations.play('left');
@@ -254,8 +336,7 @@ jQuery(document).ready(function($) {
 				}
 				posX = 0;
 				posY = 0;
-			}
-			else if (event.type == "drag") {
+			}else if (event.type == "drag"){
 				posX = event.gesture.touches[0].pageX - event.gesture.startEvent.center.pageX;
 				posY = event.gesture.touches[0].pageY - event.gesture.startEvent.center.pageY;
 				if( posX!=0 ){
@@ -272,30 +353,30 @@ jQuery(document).ready(function($) {
 					}else if(posY>0){
 						dragDown = true;
 					}
-				}/**/
+				}
 			}	
 		}
 	};
 	// Init function
-	onConnect = function() {
+	onConnect = function(){
 		manager.setScreenSize(screenW, screenH);
 		def.enableGesture(true);
 		manager.addPattern(def);
 		manager.setOnGesture(gesture);
 	};
 	// Refresh the screen
-	onRefresh = function(time) {
+	onRefresh = function(time){
 	};
 	// New blob event
-	onAddTuioBlob = function(blb) {
+	onAddTuioBlob = function(blb){
 		manager.addEvent(blb);
 	};
 	// Removed blob event
-	onRemoveTuioBlob = function(blb) {
-		manager.removeEvent(blb);
+	onRemoveTuioBlob = function(blb){
+	manager.removeEvent(blb);
 	};
 	// Updated blob event
-	onUpdateTuioBlob = function(blb) {
+	onUpdateTuioBlob = function(blb){
 		manager.updateEvent(blb);
 	};
 	client.on("connect", onConnect);

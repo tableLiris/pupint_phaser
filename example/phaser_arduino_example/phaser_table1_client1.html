@@ -33,12 +33,12 @@ var brickLeft;
 var brickRight;
 var score = 0;
 var scoreText;
-var positionX;
-var positionY;
 var posX = 0;
 var posY = 0;
 var msg;
 var spriteExist;
+var position = 0;
+
 
 function preload() {
     game.load.image('sky', 'assets/sky.jpg');
@@ -50,85 +50,87 @@ function preload() {
 
 function create() {
 	//Enable the Arcade Physics system
-    game.physics.startSystem(Phaser.Physics.ARCADE);
-	
+	game.physics.startSystem(Phaser.Physics.ARCADE);
+
 	//Add background
-    game.add.sprite(0, 0, 'sky');
-	
+	game.add.sprite(0, 0, 'sky');
+
 	//The platforms group contains the ground, the ledges and the brick walls
-    platforms = game.add.group();
-	
+	platforms = game.add.group();
+
 	//Enable physics for any object in the platforms group
-    platforms.enableBody = true;
-	
+	platforms.enableBody = true;
+
 	//Create the right brick wall
 	brickRight = platforms.create(game.world.width-50, 0, 'brick');
 	brickRight.body.immovable = true;
-	
+
 	//Create the left brick wall
 	brickLeft = platforms.create(-73, 0, 'brick');
 	brickLeft.body.immovable = true;
-	
+
+	//Create the right invisible brick wall, in order to pretend the player 
+	//to go outside of the world
+	var brickRightHided = platforms.create(game.world.width, 0, 'brick');
+	brickRightHided.body.immovable = true;
+
 	//Create the ground.
 	var ground = platforms.create(0, game.world.height - 64, 'ground');
-	
+
 	//Scale it to fit the width of the game 
-    ground.scale.setTo(4, 4);
-	
+	ground.scale.setTo(4, 4);
+
 	//This stops it from falling away when we jump on it
-    ground.body.immovable = true;
-	
+	ground.body.immovable = true;
+
 	//Create an invisible roof
-	ground = platforms.create(0, -130, 'ground');
+	ground = platforms.create(0, -132, 'ground');
 	ground.scale.setTo(4, 4);
 	ground.body.immovable = true;
-	
+
 	//Create two ledges
-    var ledge = platforms.create(game.world.width-450, 400, 'ground');
-    ledge.body.immovable = true;
-    ledge = platforms.create(50, 250, 'ground');
-    ledge.body.immovable = true;
-	
+	var ledge = platforms.create(game.world.width-450, 400, 'ground');
+	ledge.body.immovable = true;
+	ledge = platforms.create(50, 250, 'ground');
+	ledge.body.immovable = true;
+
 	//Create the player
-	player = game.add.sprite(100, game.world.height - 250, 'dude');
+	player = game.add.sprite(500, game.world.height - 250, 'dude');
 	
+	//Make the player twice bigger
+	player.scale.setTo(2, 2);
 	//Enable physics on the player
-    game.physics.arcade.enable(player);
-	
+	game.physics.arcade.enable(player);
+
 	//Player physics properties: bounce and gravity
-    player.body.bounce.y = 0.2;
-    player.body.gravity.y = 150;
-	
+	player.body.bounce.y = 0.2;
+	player.body.gravity.y = 150;
+
 	// Set max velocity in X and Y axis
 	player.body.maxVelocity.x = 350;
 	player.body.maxVelocity.y = 350;
-	
+
 	//Walking animations
-    player.animations.add('left', [0, 1, 2, 3], 10, true);
-    player.animations.add('right', [5, 6, 7, 8], 10, true);
+	player.animations.add('left', [0, 1, 2, 3], 10, true);
+	player.animations.add('right', [5, 6, 7, 8], 10, true);
 	spriteExist = true;
-	
+
 	//Create a group of stars
-    stars = game.add.group();
-    stars.enableBody = true;
-	
+	stars = game.add.group();
+	stars.enableBody = true;
+
 	//Create 18 of them, ranged radomly
-    for (var i = 0; i < 18; i++)
-    {
-        var starHeight = game.world.height - Math.floor(Math.random() * 600 + 100);
-        var star = stars.create( i*70, starHeight, 'star');
-    }
-	
+	for (var i = 0; i < 18; i++){
+		var starHeight = game.world.height - Math.floor(Math.random() * 600 + 100);
+		var star = stars.create( i*70, starHeight, 'star');
+	}
+
 	//If stars are created overlaping with platforms, kill them
 	game.physics.arcade.overlap(stars, platforms, killStar,null,this);
-	
+
 	//The score
-    scoreText = game.add.text(55, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
+	scoreText = game.add.text(55, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
 	
-	//Position of player
-	positionX = game.add.text(55, 46, 'PositionX: 0', { fontSize: '32px', fill: '#000' });
-	positionY = game.add.text(55, 76, 'PositionY: 0', { fontSize: '32px', fill: '#000' });
-    
 	//Control of keyborad
 	cursors = game.input.keyboard.createCursorKeys();
 }
@@ -137,38 +139,28 @@ function update() {
 	if(spriteExist == true){
 		//Collide the player with the platforms
 		game.physics.arcade.collide(player, platforms);
-		
+
 		//If the player overlaps with any of the starts, call the collectStar function
 		game.physics.arcade.overlap(player, stars, collectStar, null, this);
-		
-		//Update position of the player
-		positionX.text = "PositionX: " + Math.floor(player.position.x);	
-		positionY.text = "PositionY: " + Math.floor(player.position.y);
-		
+
 		//Give the player a deceleration on X axis
 		player.body.drag.x  = 80;
-		
+
 		//Control by keyborad
-		/*if (cursors.left.isDown)
-		{
+		/*if (cursors.left.isDown){
 			player.body.velocity.x = -150;
 			player.animations.play('left');
-		}
-		else if (cursors.right.isDown)
-		{
+		}else if (cursors.right.isDown){
 			player.body.velocity.x = 150;
 			player.animations.play('right');
-		}
-		else
-		{
+		}else{
 			player.animations.stop();
 			player.frame = 4;
 		}
-		if (cursors.up.isDown && player.body.touching.down)
-		{
+		if(cursors.up.isDown && player.body.touching.down){
 			player.body.velocity.y = -350;
 		}*/
-		
+
 		//Animation of the player
 		if(player.body.velocity.x<-10){
 			player.animations.play('left');
@@ -178,20 +170,24 @@ function update() {
 			player.animations.stop();
 			player.frame = 4;
 		}
-		
-		//When the player reaches the right border of the game world, we kill it and send the message of its position and velocity
-		if (player.position.x  >= screenW-32)
-			{
-				msg = {name: 'table1', direction: 'table1_right', playerPositionX: player.position.x, playerPositionY: player.position.y, screenHigh: player.position.y/(screenH-112), playerBodyVelocityX: player.body.velocity.x, playerBodyVelocityY: player.body.velocity.y};
-				socket.emit('addSprite',msg);
-				killSprite(player);
-			}
-		else if (player.position.x  <= 0)
-			{
-				msg = {name: 'table1', direction: 'table1_left', playerPositionX: player.position.x, playerPositionY: player.position.y, screenHigh: player.position.y/(screenH-112), playerBodyVelocityX: player.body.velocity.x, playerBodyVelocityY: player.body.velocity.y};
-				socket.emit('addSprite',msg);
-				killSprite(player);
-			}	
+
+		//When the tablet is placed on the top of table1 and player reaches the up border,
+		//we kill the player and send the message of its position and velocity
+		if(position == 1 & player.position.y <= 1){
+			msg = {name: 'table1', direction: 'table1_up', playerPositionX: player.position.x, playerPositionY: player.position.y, screenWidth: player.position.x/(screenW-50), playerBodyVelocityX: player.body.velocity.x, playerBodyVelocityY: player.body.velocity.y};
+			socket.emit('addSprite',msg);
+			killSprite(player);
+		}else if(position == 2 & player.position.x  >= screenW-64){
+		//Tablet on the right side, player reaches the right side of the game world
+			msg = {name: 'table1', direction: 'table1_right', playerPositionX: player.position.x, playerPositionY: player.position.y, screenHigh: player.position.y/(screenH-112), playerBodyVelocityX: player.body.velocity.x, playerBodyVelocityY: player.body.velocity.y};
+			socket.emit('addSprite',msg);
+			killSprite(player);
+		}else if (player.position.x  <= 0){
+		//Player reaches the left side of the game world
+			msg = {name: 'table1', direction: 'table1_left', playerPositionX: player.position.x, playerPositionY: player.position.y, screenHigh: player.position.y/(screenH-112), playerBodyVelocityX: player.body.velocity.x, playerBodyVelocityY: player.body.velocity.y};
+			socket.emit('addSprite',msg);
+			killSprite(player);
+		}
 	}
 }
 //If the stars overlap with platform, we kill them
@@ -200,10 +196,10 @@ function killStar (star){
 }
 
 //Collect star and add scores
-function collectStar (player, star) {
-    star.kill();
-    score += 10;
-    scoreText.text = 'Score: ' + score;
+function collectStar (player, star){
+	star.kill();
+	score += 10;
+	scoreText.text = 'Score: ' + score;
 }
 
 //If the player move out of the game world, we kill it
@@ -213,34 +209,76 @@ function killSprite(player){
 }
 
 $.noConflict();
-jQuery(document).ready(function($) {
+jQuery(document).ready(function($){
 	Hammer.plugins.fakeMultitouch();
-	
+
 	//connexion to the server to intercept the messages sent to the network
 	socket = io.connect("192.168.1.104:1337");
 	console.log("connected");
-	socket.on("news", function(data) {
+	socket.on("news", function(data){
 		pos = data.hello;
 	});	
-	
-	//When another device connects, remove the brick wall from this game world
-	socket.on("removeWall", function(data) {
-		var obj = JSON.parse(data);
-		if (obj[0].table == "tablet"){
-			brickRight.kill();
-		}
-		else if (obj[0].table == "table2"){
-			brickLeft.kill();
-		}
+
+	//Table2 connects
+	socket.on("changeWorldLeft", function(){
+		console.log("changeWorldLeft");
+		brickLeft.kill();
+	});
+
+	//Tablet connects on right side
+	socket.on("changeWorldRight", function(){
+		console.log("changeWorldRight");
+		brickRight.kill();
+		position = 2;
+	});
+
+	//Tablet connects on top side
+	socket.on("changeWorldTop", function(){
+		console.log("changeWorldTop");
+		position = 1;
 	});
 	
 	//When receive the message, make the player and add its properites
-	socket.on("addSprite", function(data) {
+	socket.on("addSprite", function(data){
 		var obj = JSON.parse(data);
+		//Receive player from the right side
 		if ((obj[0].direction == 'tablet_left')){
 			screenW = $(window).width();
 			screenH = $(window).height();
-			player = game.add.sprite(screenW-50, obj[0].screenHigh*(screenH-112), 'dude');
+			player = game.add.sprite(screenW-65, obj[0].screenHigh*(screenH-112), 'dude');
+			player.scale.setTo(2, 2);
+			game.physics.arcade.enable(player);
+			player.body.bounce.y = 0.2;
+			player.body.gravity.y = 150;
+			player.body.maxVelocity.x = 350;
+			player.body.maxVelocity.y = 350;
+			player.animations.add('left', [0, 1, 2, 3], 10, true);
+			player.animations.add('right', [5, 6, 7, 8], 10, true);
+			player.body.velocity.x = obj[0].playerBodyVelocityX;
+			player.body.velocity.y = obj[0].playerBodyVelocityY;
+			spriteExist = true;
+		}else if ((obj[0].direction == 'table2_right')){
+			//Receive player from the left side
+			screenW = $(window).width();
+			screenH = $(window).height();
+			player = game.add.sprite(1, obj[0].screenHigh*(screenH-112), 'dude');
+			player.scale.setTo(2, 2);
+			game.physics.arcade.enable(player);
+			player.body.bounce.y = 0.2;
+			player.body.gravity.y = 150;
+			player.body.maxVelocity.x = 350;
+			player.body.maxVelocity.y = 350;
+			player.animations.add('left', [0, 1, 2, 3], 10, true);
+			player.animations.add('right', [5, 6, 7, 8], 10, true);
+			player.body.velocity.x = obj[0].playerBodyVelocityX;
+			player.body.velocity.y = obj[0].playerBodyVelocityY;
+			spriteExist = true;
+		}else if ((obj[0].direction == 'table2_up')){
+			//Receive player from the top side
+			screenW = $(window).width();
+			screenH = $(window).height();
+			player = game.add.sprite(obj[0].screenWidth*(screenW-50), 2, 'dude');
+			player.scale.setTo(2, 2);
 			game.physics.arcade.enable(player);
 			player.body.bounce.y = 0.2;
 			player.body.gravity.y = 150;
@@ -252,23 +290,8 @@ jQuery(document).ready(function($) {
 			player.body.velocity.y = obj[0].playerBodyVelocityY;
 			spriteExist = true;
 		}
-		else if ((obj[0].direction == 'table2_right')){
-			screenW = $(window).width();
-			screenH = $(window).height();
-			player = game.add.sprite(1, obj[0].screenHigh*(screenH-112), 'dude');
-			game.physics.arcade.enable(player);
-			player.body.bounce.y = 0.2;
-			player.body.gravity.y = 150;
-			player.body.maxVelocity.x = 350;
-			player.body.maxVelocity.y = 350;
-			player.animations.add('left', [0, 1, 2, 3], 10, true);
-			player.animations.add('right', [5, 6, 7, 8], 10, true);
-			player.body.velocity.x = obj[0].playerBodyVelocityX;
-			player.body.velocity.y = obj[0].playerBodyVelocityY;
-			spriteExist = true;
-		} 
 	});
-	
+
 	var client = new Tuio.Client({
 		host: "http://192.168.1.104:5000"
 	}),
@@ -276,12 +299,8 @@ jQuery(document).ready(function($) {
 	screenH = $(window).height(),
 	manager = new Manager(),
 	def = new Pattern(),
-	dragLeft = false,
-	dragRight = false,
-	dragUp = false,
-	dragDown = false,
 
-	// Gesture recognition function
+	//Gesture recognition function
 	gesture = function(event){
 		if(spriteExist){
 			if (event.type == "touch"){
@@ -295,26 +314,26 @@ jQuery(document).ready(function($) {
 			}		
 		}
 	},
-	// Init function
-	onConnect = function() {
+	//Init function
+	onConnect = function(){
 		manager.setScreenSize(screenW, screenH);
 		def.enableGesture(true);
 		manager.addPattern(def);
 		manager.setOnGesture(gesture);
 	},
-	// Refresh the screen
-	onRefresh = function(time) {
+	//Refresh the screen
+	onRefresh = function(time){
 	},
-	// New blob event
-	onAddTuioBlob = function(blb) {
+	//New blob event
+	onAddTuioBlob = function(blb){
 		manager.addEvent(blb);
 	},
-	// Removed blob event
-	onRemoveTuioBlob = function(blb) {
+	//Removed blob event
+	onRemoveTuioBlob = function(blb){
 		manager.removeEvent(blb);
 	},
-	// Updated blob event
-	onUpdateTuioBlob = function(blb) {
+	//Updated blob event
+	onUpdateTuioBlob = function(blb){
 		manager.updateEvent(blb);
 	};
 	client.on("connect", onConnect);

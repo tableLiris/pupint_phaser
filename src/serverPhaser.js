@@ -1,8 +1,16 @@
 var app = require('http').createServer(handler), 
     io = require('socket.io').listen(app), 
     fs = require('fs'),
-    cpt = 0
+    cpt = 0;
+	
+var arduino = require('duino');
 
+var board = new arduino.Board();
+
+var button = new arduino.Button({
+    board: board,
+    pin: 13
+});
     app.listen(1337);
 
     function handler (req, res) {
@@ -31,9 +39,9 @@ var app = require('http').createServer(handler),
         socket.on('addSprite', function (data) {
             socket.broadcast.emit('addSprite',data);
         });
-        socket.on('removeWall', function (data) {
+        /*socket.on('removeWall', function (data) {
             socket.broadcast.emit('removeWall',data);
-        });
+        });*/
         socket.on('ray', function (data) {
             socket.broadcast.emit('ray',data);
         });
@@ -43,4 +51,5 @@ var app = require('http').createServer(handler),
         socket.on('disconnect', function() {
             cpt--;
         });
+
     });
